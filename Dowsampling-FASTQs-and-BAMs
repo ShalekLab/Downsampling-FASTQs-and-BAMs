@@ -1,0 +1,22 @@
+# Programs used in the following script
+  # Samtools (http://www.htslib.org/)
+  # Picard-Tools (https://broadinstitute.github.io/picard/)
+  # Java-1.8 (https://www.java.com/en/download/)
+
+######## Downsampling FASTQs to desired read depth for subsequent processing ########
+# Generate BAM/SAM file from sample FASTQs
+java -jar $PICARD FastqToSam F1=[SAMPLE_FASTQ_R1].fastq.gz F2=[SAMPLE_FASTQ_R2].fastq.gz  O=[SAMPLE_NAME].fastq_to_bam.bam SM=[SAMPLE_NAME]
+
+#  Sort BAM file
+samtools sort -n -o [SAMPLE_NAME]_sorted.bam [SAMPLE_NAME].fastq_to_bam.bam
+
+#  Downsample BAM file to desired depth
+samtools view -s 0.1 [SAMPLE_NAME]_sorted.bam > [SAMPLE_NAME]_sorted_0.1.bam # in this example, the sorted BAM file is downsampled to 10% its initial size
+
+#  Index BAM file
+samtools index [SAMPLE_NAME]_sorted_0.1.bam [SAMPLE_NAME]_sorted_0.1.bai
+
+# split BAM file into read 1 & read 2 FASTQs
+samtools fastq -1 [SAMPLE_NAME]_DS0.1_S1_L1_R1_001.fastq.gz -2 [SAMPLE_NAME]_DS0.1_S1_L1_R2_001.fastq.gz [SAMPLE_NAME]_sorted_0.1.bam
+
+# Use downsampled FASTQs for subsequent analyses
