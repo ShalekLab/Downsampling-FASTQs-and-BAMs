@@ -1,17 +1,21 @@
+# By wadswomh [at] broadinstitute.org, created May 2020
+# A simply script made by the Shalek Lab for downsampling FASTQ files
 # Programs used in the following script
   # Samtools (http://www.htslib.org/)
   # Picard-Tools (https://broadinstitute.github.io/picard/)
   # Java-1.8 (https://www.java.com/en/download/)
+----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ######## Downsampling FASTQs to desired read depth for subsequent processing ########
-# Generate BAM/SAM file from sample FASTQs
+# Generate BAM/SAM file 
 java -jar $PICARD FastqToSam F1=[SAMPLE_FASTQ_R1].fastq.gz F2=[SAMPLE_FASTQ_R2].fastq.gz  O=[SAMPLE_NAME].fastq_to_bam.bam SM=[SAMPLE_NAME]
 
 #  Sort BAM file
 samtools sort -n -o [SAMPLE_NAME]_sorted.bam [SAMPLE_NAME].fastq_to_bam.bam
 
 #  Downsample BAM file to desired depth
-samtools view -s 0.1 [SAMPLE_NAME]_sorted.bam > [SAMPLE_NAME]_sorted_0.1.bam # in this example, the sorted BAM file is downsampled to 10% its initial size
+samtools view -s 0.1 [SAMPLE_NAME]_sorted.bam > [SAMPLE_NAME]_sorted_0.1.bam 
+# in this example, the sorted BAM file is downsampled to 10% its initial size
 
 #  Index BAM file
 samtools index [SAMPLE_NAME]_sorted_0.1.bam [SAMPLE_NAME]_sorted_0.1.bai
